@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f1f1f1;
+}
+.form-control {
+    height: 44px;
+}
+#regForm {
+  background-color: #ffffff;
+  margin: 100px auto;
+  font-family: Raleway;
+  padding: 40px;
+  width: 70%;
+  min-width: 300px;
+}
+
+h1 {
+  text-align: center;  
+}
+
+input {
+  padding: 10px;
+  width: 100%;
+  font-size: 17px;
+  font-family: Raleway;
+  border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+  background-color: #ffdddd;
+}
+
+/* Hide all steps by default: */
+.tab {
+  display: none;
+}
+
+button {
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 17px;
+  font-family: Raleway;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+#prevBtn {
+  background-color: #bbbbbb;
+}
+
+/* Make circles that indicate the steps of the form: */
+.step {
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbbbbb;
+  border: none;  
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.step.finish {
+  background-color: #4CAF50;
+}
+</style>
+<body>
+
+<form id="regForm" action="/submit.php">
+  <h1>Register:</h1>
+  <!-- One "tab" for each step in the form: -->
+  <div class="tab">
+    <p><input class="green-field form-control" placeholder="Name..." name="fname"></p>
+    Animal:
+    <p><select id="animal" name="animal" class="green-field form-control">
+        <tr>
+        <option value="111">111</option>
+        <option value="222">222</option>
+        <option value="333">333</option>
+        </tr>
+    </select></p>
+  </div>
+  <div class="tab">Country:
+    <p><select class="green-field form-control" id="country" name="country" class="green-field form-control">
+        <tr>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="USA">USA</option>
+        <option value="Japan">Japan</option>        
+        </tr>
+    </select></p>
+  </div>
+  <div class="tab row">
+    <div class="rows" id="page-3">
+        <div class="row">
+            <div class="col-sm-4">
+                <p><select class="green-field form-control option" id="option" name="option[]" class="green-field form-control">
+                    <tr>
+                    <option value="111">111</option>
+                    <option value="222">222</option>
+                    <option value="333">333</option>
+                    </tr>
+                </select></p>
+            </div>
+            <div class="col-sm-4">
+                <p><input class="green-field form-control number" id="number" placeholder="Enter Number" name="number[]"></p>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="add" onclick="addRow()">Add Row</button>
+  </div>
+  <div class="tab row">
+    <div class="rows" id="page-4">
+        <div class="row">
+            <div class="col-sm-4">
+                <p><select class="green-field form-control option4" id="option4" name="option4[]" class="green-field form-control">
+                    <tr>
+                    <option value="111">111</option>
+                    <option value="222">222</option>
+                    <option value="333">333</option>
+                    </tr>
+                </select></p>
+            </div>
+            <div class="col-sm-4">
+                <p><input class="green-field form-control number4" id="number4" placeholder="Enter Name" name="number4[]"></p>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="add" onclick="addNRow()">Add Row</button>
+  </div>
+  <div class="tab">
+    <textarea id="notisk" style="height: 200px;" class="text-field noteTextarea form-control" placeholder=""></textarea>
+  </div>
+  <div style="overflow:auto;">
+    <div style="float:right;">
+      <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+      <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+    </div>
+  </div>
+  <!-- Circles which indicates the steps of the form: -->
+  <div style="text-align:center;margin-top:40px;">
+    <span class="step"></span>
+    <span class="step"></span>
+    <span class="step"></span>
+    <span class="step"></span>
+    <span class="step"></span>
+  </div>
+</form>
+
+<script>
+var currentTab = 0; // Current tab is set to be the first tab (0)
+showTab(currentTab); // Display the current tab
+var currentRow3 = 1;
+var currentRow4 = 1;
+function showTab(n) {
+  // This function will display the specified tab of the form...
+  var x = document.getElementsByClassName("tab");
+  x[n].style.display = "block";
+  //... and fix the Previous/Next buttons:
+  if (n == 0) {
+    document.getElementById("prevBtn").style.display = "none";
+  } else {
+    document.getElementById("prevBtn").style.display = "inline";
+  }
+  if (n == (x.length - 1)) {
+    document.getElementById("nextBtn").innerHTML = "Submit";
+    var wholestr = "Page1"+"\n";
+    var fname = document.getElementsByName("fname")[0].value;
+    wholestr += "Name = " + fname + ",";
+    var animal = document.getElementsByName("animal")[0].value;
+    wholestr += "Animal = " + animal + "\n";
+    wholestr += "Page2"+"\n";
+    var country = document.getElementsByName("country")[0].value;
+    wholestr += "Country = " + country + "\n";    
+    wholestr += "Page3"+"\n";
+    var number = document.getElementsByClassName("number");
+    var option = document.getElementsByClassName("option");
+    for (var i = 0; i < number.length; ++i) {
+        wholestr += "Option = " + option[i].value + "," + "Number = " + number[i].value +"\n";
+    }
+    wholestr += "Page4"+"\n";
+    var number4 = document.getElementsByClassName("number4");
+    var option4 = document.getElementsByClassName("option4");
+    for (var i = 0; i < number4.length; ++i) {
+        wholestr += "Option = " + option4[i].value + "," + "Name = " + number4[i].value +"\n";
+    }
+    document.getElementById("notisk").value = wholestr;
+    console.log(wholestr);
+  } else {
+    document.getElementById("nextBtn").innerHTML = "Next";
+  }
+  //... and run a function that will display the correct step indicator:
+  fixStepIndicator(n)
+}
+function addRow() {
+    var node = `<div class="row">
+            <div class="col-sm-4">
+                <p><select class="green-field form-control option" id="option" class="green-field form-control" name="option[]">
+                    <tr>
+                    <option value="111">111</option>
+                    <option value="222">222</option>
+                    <option value="333">333</option>
+                    </tr>
+                </select></p>
+            </div>
+            <div class="col-sm-4">
+                <p><input class="green-field form-control number" id="number" placeholder="Enter Number" name="number[]"></p>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-danger" style="height:44px;" onclick="removeRow(this)">Remove</button>
+            </div>
+        </div>`;
+    var div = document.createElement('div');
+    div.innerHTML = node.trim();
+    document.getElementById("page-3").appendChild(div.firstChild);
+    currentRow3+=1;
+}
+function removeRow(e) {
+    e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
+}
+
+function addNRow() {
+    var node = `<div class="row">
+            <div class="col-sm-4">
+                <p><select class="green-field form-control option4" id="option4" class="green-field form-control" name="option4[]">
+                    <tr>
+                    <option value="111">111</option>
+                    <option value="222">222</option>
+                    <option value="333">333</option>
+                    </tr>
+                </select></p>
+            </div>
+            <div class="col-sm-4">
+                <p><input class="green-field form-control number4" id="number4" placeholder="Enter Name" name="number4[]"></p>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-danger" style="height:44px;" onclick="removeNRow(this)">Remove</button>
+            </div>
+        </div>`;
+    var div = document.createElement('div');
+    div.innerHTML = node.trim();
+    document.getElementById("page-4").appendChild(div.firstChild);
+    currentRow4+=1;
+}
+function removeNRow(e) {
+    e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
+}
+
+function nextPrev(n) {
+  // This function will figure out which tab to display
+  var x = document.getElementsByClassName("tab");
+  // Exit the function if any field in the current tab is invalid:
+  if (n == 1 && !validateForm()) return false;
+  // Hide the current tab:
+  x[currentTab].style.display = "none";
+  // Increase or decrease the current tab by 1:
+  currentTab = currentTab + n;
+  // if you have reached the end of the form...
+  if (currentTab >= x.length) {
+    // ... the form gets submitted:
+    document.getElementById("regForm").submit();
+    return false;
+  }
+  // Otherwise, display the correct tab:
+  showTab(currentTab);
+}
+
+function validateForm() {
+  // This function deals with validation of the form fields
+  var x, y, i, valid = true;
+  x = document.getElementsByClassName("tab");
+  y = x[currentTab].getElementsByTagName("input");
+  // A loop that checks every input field in the current tab:
+  for (i = 0; i < y.length; i++) {
+    // If a field is empty...
+    if (y[i].value == "") {
+      // add an "invalid" class to the field:
+      y[i].className += " invalid";
+      // and set the current valid status to false
+      valid = false;
+    }
+  }
+  // If the valid status is true, mark the step as finished and valid:
+  if (valid) {
+    document.getElementsByClassName("step")[currentTab].className += " finish";
+  }
+  return valid; // return the valid status
+}
+
+function fixStepIndicator(n) {
+  // This function removes the "active" class of all steps...
+  var i, x = document.getElementsByClassName("step");
+  for (i = 0; i < x.length; i++) {
+    x[i].className = x[i].className.replace(" active", "");
+  }
+  //... and adds the "active" class on the current step:
+  x[n].className += " active";
+}
+</script>
+
+</body>
+</html>
